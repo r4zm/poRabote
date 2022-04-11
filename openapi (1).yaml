@@ -1,0 +1,221 @@
+openapi: 3.0.0
+info:
+  description: This is a products-rms-product API.
+  version: 2.0.0
+  title: products-rms-createProduct-v1
+  contact:
+    email: aleksandr.kozyrev@leroymerlin.ru
+tags:
+  - name: products
+    description: detailed product information
+security:
+  - ApiKeyAuth: []
+paths:
+  '/products/{productRefBu}':
+    get:
+      summary: Returns detailed item information.
+      operationId: GetProductById
+      parameters:
+        - in: path
+          name: productRefBu
+          required: true
+          description: Product's LM code for which information is requested
+          schema:
+            type: integer
+      tags:
+        - products
+      responses:
+        '200':
+          description: Item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productRefBuTypeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '523':
+          $ref: '#/components/responses/OriginIsUnreachable'
+servers:
+  - url: 'https://orchestrator-mrkdrms-develop-apim-stage.apps.lmru.tech/v5'
+components:
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      content:
+        '*/*':
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        '*/*':
+          schema:
+            $ref: '#/components/schemas/InternalServerError'
+    NotFound:
+      description: Not Found
+      content:
+        '*/*':
+          schema:
+            $ref: '#/components/schemas/NotFound'
+    BadRequest:
+      description: Bad request
+      content:
+        '*/*':
+          schema:
+            $ref: '#/components/schemas/BadRequest'
+    OriginIsUnreachable:
+      description: Origin is unreachable
+      content:
+        '*/*':
+          schema:
+            $ref: '#/components/schemas/OriginIsUnreachable'
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    productRefBuTypeResponse:
+      type: object
+      properties:
+        productRefBu:
+          $ref: '#/components/schemas/productRefBuType'
+        productGtin:
+          description: Barcode of product
+          type: array
+          items:
+            $ref: '#/components/schemas/productGtinType'
+        productCreationDate:
+          description: Date of creation
+          type: string
+          format: date-time
+          example: '2022-04-11 11:00:00'
+        departmentId:
+          description: ID of a department
+          type: number
+          example: 8
+        subDepartmentId:
+          description: ID of a sub-department
+          type: number
+          example: 830
+        typeId:
+          description: ID of a Type
+          type: number
+          example: 40
+        subTypeId:
+          description: ID of subType
+          type: number
+          example: 20
+        productRefAdeo:
+          description: ADEO key
+          type: string
+          example: 831435
+    productRefBuType:
+      description: ID of a product
+      type: integer
+      example: '18186632'
+    productGtinType:
+      type: object
+      properties:
+        productGtin:
+          description: Barcode of product
+          type: integer
+          example: '3276000248613'
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      type: object
+      properties:
+        statusCode:
+          description: status code
+          type: number
+          example: 401
+        code:
+          description: code
+          type: number
+          example: 401
+        error:
+          description: error
+          type: string
+          example: Unauthorized
+        message:
+          description: description
+          type: string
+          example: Failed authorization
+    InternalServerError:
+      description: Internal Server Error
+      type: object
+      properties:
+        statusCode:
+          description: status code
+          type: number
+          example: 500
+        error:
+          description: Internal Server Error
+          type: string
+          example: Internal Server Error
+        message:
+          description: Internal Server Error
+          type: string
+          example: Internal Server Error
+    OriginIsUnreachable:
+      description: Origin is unreachable
+      type: object
+      properties:
+        statusCode:
+          description: status code
+          type: number
+          example: 523
+        code:
+          description: status code
+          type: number
+          example: 523
+        message:
+          description: Origin is unreachable
+          type: string
+          example: Origin is unreachable
+    NotFound:
+      description: Not Found
+      type: object
+      properties:
+        statusCode:
+          description: status code
+          type: number
+          example: 404
+        code:
+          description: code
+          type: number
+          example: 404
+        error:
+          description: error
+          type: string
+          example: Not Found
+        message:
+          description: Error message
+          type: string
+          example: Empty result
+    BadRequest:
+      description: Bad request
+      type: object
+      properties:
+        statusCode:
+          description: status code
+          type: number
+          example: 400
+        code:
+          description: code
+          type: number
+          example: 400
+        error:
+          description: error
+          type: string
+          example: Bad Request
+        message:
+          description: error message
+          type: string
+          example: Bad request
